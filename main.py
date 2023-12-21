@@ -4,7 +4,7 @@ pygame.init()
 
 game = Game()
 
-while game.is_running() == True:
+while game.is_running:
   game.handle_events()
   game.update()
   game.render()
