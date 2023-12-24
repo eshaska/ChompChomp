@@ -1,7 +1,6 @@
 import pygame
 import random
 
-#fix comments and put into github
 
 class Game:
   def __init__(self):
@@ -75,8 +74,8 @@ class Game:
         self.is_running = False
       elif event.type == pygame.MOUSEBUTTONDOWN:
         if self.game_state == "intro":
-          click_rect_play = pygame.Rect(200, 300, 200, 50)
-          click_rect_instructions = pygame.Rect(420, 300, 200, 50)
+          click_rect_play = pygame.Rect(300, 290, 200, 50)
+          click_rect_instructions = pygame.Rect(300, 360, 200, 50)
           if click_rect_play.collidepoint(event.pos):
             self.game_state = "playing"
           elif click_rect_instructions.collidepoint(event.pos):
@@ -84,15 +83,15 @@ class Game:
 
 
   def render_health_bar(self):
-    health_bar_width = (self.player_health / 100) * 200  # Adjust the multiplier and width as needed
+    health_bar_width = (self.player_health / 100) * 200
 
     # Draw the health bar
-    pygame.draw.rect(self.screen, (255, 0, 0), (50, 20, 200, 20))  # Red background
-    pygame.draw.rect(self.screen, (0, 255, 0), (50, 20, health_bar_width, 20))  # Green foreground
+    pygame.draw.rect(self.screen, (255, 0, 0), (50, 20, 200, 20))
+    pygame.draw.rect(self.screen, (0, 255, 0), (50, 20, health_bar_width, 20))
 
 
   def monster_update(self, monster_speed, monster_path, monster_rect):
-     # Move the monster automatically along the predefined path
+    # Move the monster automatically along the predefined path
     target_x, target_y = monster_path[self.current_path_index]
 
     # Move towards the target point
@@ -109,16 +108,15 @@ class Game:
 
     if not self.collided:
       if self.check_collision(self.player_rect, monster_rect):
-        self.player_health -= 10  # Adjust the decrement as needed
-        self.collided = True  # Set the collision flag
+        self.player_health -= 10
+        self.collided = True
         if self.player_health <= 0:
           self.game_state = "losing"
     else:
       self.collided_timer += 1
-      if self.collided_timer > 60:  # Adjust the value based on your needs
+      if self.collided_timer > 60:
         self.collided = False
         self.collided_timer = 0
-    # Check if the monster reached its target point
     distance_threshold = 5
     if (
         abs(monster_rect.x - target_x) <= distance_threshold
@@ -133,7 +131,6 @@ class Game:
 
 
   def update(self):
-
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT] and self.player_rect.left > 0:
         self.player_rect.x -= 5
@@ -157,7 +154,7 @@ class Game:
 
   def check_collision_gems(self):
     for gem_position in self.gems:
-      gem_rect = pygame.Rect(gem_position[0] - 10, gem_position[1] - 10, 20, 20)  # Assuming gem size is 20x20
+      gem_rect = pygame.Rect(gem_position[0] - 10, gem_position[1] - 10, 20, 20)
       if self.check_collision(self.player_rect, gem_rect):
         self.gems.remove(gem_position)
 
@@ -174,7 +171,7 @@ class Game:
     "will lose the game! Good luck!"
     ]
 
-    line_height = 20  # Adjust as needed
+    line_height = 20
     total_height = len(instructions_lines) * line_height
     start_y = (self.height - total_height) // 2
     for i, line in enumerate(instructions_lines):
@@ -187,7 +184,8 @@ class Game:
 
   def render_intro_scene(self):
     self.screen.fill((255,182,193))
-    self.game_state = "intro" #shouldnt need
+    self.game_state = "intro"
+
     # Draw a rectangle for the title
     title_rect = pygame.Rect(50, 70, 700, 150)
     title_color = (255, 255, 255)
@@ -202,7 +200,7 @@ class Game:
 
     # Draw "Click to Play" button
     click_rect_play = pygame.Rect(300, 290, 200, 50)
-    click_color_play = (255, 20, 147)  # Dark Pink color for "Click to Play"
+    click_color_play = (255, 20, 147) 
     pygame.draw.rect(self.screen, click_color_play, click_rect_play)
 
     # Draw text for "Click to Play"
@@ -211,12 +209,12 @@ class Game:
     click_text_rect_play = click_text_play.get_rect(center=click_rect_play.center)
     self.screen.blit(click_text_play, click_text_rect_play)
 
-    # Draw "How to Play" button
+    # Draw "Instructions" button
     click_rect_instructions = pygame.Rect(300, 360, 200, 50)
-    click_color_instructions = (255, 20, 147)  # Dark Pink color for "How to Play"
+    click_color_instructions = (255, 20, 147)
     pygame.draw.rect(self.screen, click_color_instructions, click_rect_instructions)
 
-    # Draw text for "How to Play"
+    # Draw text for "Instructions"
     click_font_instructions = pygame.font.Font(None, 36)
     click_text_instructions = click_font_instructions.render("Instructions", True, (255, 255, 255))
     click_text_rect_instructions = click_text_instructions.get_rect(center=click_rect_instructions.center)
