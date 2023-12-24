@@ -1,14 +1,18 @@
 import pygame
 import random
 
+#make it so player can't leave screen
+#make other monsters with different powers and paths
+#have to reset gems after rounds
+#fix comments and put into github
+
 class Game:
   def __init__(self):
-    pygame.display.set_caption("Your Game Title")
+    pygame.display.set_caption("Chomp Chomp")
     self.width, self.height = 800, 600
     self.screen = pygame.display.set_mode((self.width, self.height))
     self.clock = pygame.time.Clock()
     self.is_running = True
-    #self.in_game = False
     self.game_state = "intro"
 
     self.player_rect = pygame.Rect(100, 100, 50, 50)
@@ -33,9 +37,9 @@ class Game:
 
 
   def render_gems(self):
-    gem_color = (255, 255, 0)  # Yellow color for gems
+    gem_color = (255, 255, 0)
     for gem_position in self.gems:
-      pygame.draw.circle(self.screen, gem_color, gem_position, 10)  # Assuming gems as circles
+      pygame.draw.circle(self.screen, gem_color, gem_position, 10)
 
 
   def handle_events(self):
@@ -44,23 +48,13 @@ class Game:
         self.is_running = False
       elif event.type == pygame.MOUSEBUTTONDOWN:
         if self.game_state == "intro":
-          click_rect_play = pygame.Rect(200, 300, 400, 100)
-          click_rect_instructions = pygame.Rect(100, 300, 200, 50)
+          click_rect_play = pygame.Rect(200, 300, 200, 50)
+          click_rect_instructions = pygame.Rect(420, 300, 200, 50)
           if click_rect_play.collidepoint(event.pos):
             self.game_state = "playing"
           elif click_rect_instructions.collidepoint(event.pos):
             self.game_state = "instructions"
 
-###########################
-      """  elif self.game_state == "playing":
-          # Assuming your winning condition
-          if event.button == 1 and self.check_winning_condition(event.pos):
-            self.game_state = "winning"
-          elif self.game_state == "winning":
-              # Handle click on the home button to transition back to the intro state
-            if event.button == 1 and 100 <= event.pos[0] <= 200 and 100 <= event.pos[1] <= 150:
-              self.game_state = "intro"
-      """
 
   def render_health_bar(self):
     health_bar_width = (self.player_health / 100) * 200  # Adjust the multiplier and width as needed
@@ -133,53 +127,64 @@ class Game:
 
 
   def render_instructions(self):
-    self.screen.fill((10,182,193))
-    instructions_font = pygame.font.Font(None, 64)
-    instructions_text = instructions_font.render("How to Play: XXXXXX XXXXX", True, (255, 255, 255))
-    instructions_rect = instructions_text.get_rect(center=(self.width // 2, self.height // 2))
-    self.screen.blit(instructions_text, instructions_rect)
+    self.screen.fill((255,182,193))
+    
+    instructions_font = pygame.font.Font(None, 25)
+    instructions_lines = [
+    "To play, move using the arrow keys and",
+    "eat all the yellow food! But don't let the",
+    "monsters get you, if you touch them you will",
+    "lose health, and if you lose all your health you",
+    "will lose the game! Good luck!"
+    ]
+
+    line_height = 20  # Adjust as needed
+    total_height = len(instructions_lines) * line_height
+    start_y = (self.height - total_height) // 2
+    for i, line in enumerate(instructions_lines):
+      line_surface = instructions_font.render(line, True, (255, 255, 255))
+      line_rect = line_surface.get_rect(center=(self.width // 2, start_y + i * line_height))
+      self.screen.blit(line_surface, line_rect)
     self.render_home_button()
     pygame.display.flip()
 
 
   def render_intro_scene(self):
     self.screen.fill((255,182,193))
-    self.game_state = "intro"
+    self.game_state = "intro" #shouldnt need
     # Draw a rectangle for the title
-    title_rect = pygame.Rect(50, 50, 700, 100)
-    title_color = (0, 0, 255)  # Blue color for the title
+    title_rect = pygame.Rect(50, 50, 700, 150)
+    title_color = (255, 255, 255)
     pygame.draw.rect(self.screen, title_color, title_rect)
 
     # Draw text for the title
     title_font = pygame.font.Font(None, 64)
-    title_text = title_font.render("Game Title XX", True, (255, 255, 255))
+    title_text = title_font.render("Chomp Chomp", True, (255, 20, 147))
     title_text_rect = title_text.get_rect(center=title_rect.center)
     self.screen.blit(title_text, title_text_rect)
 
-    # Draw a rectangle for "Click to Play"
-    click_rect = pygame.Rect(200, 300, 400, 100)
-    click_color = (0, 255, 0)  # Green color for "Click to Play"
-    pygame.draw.rect(self.screen, click_color, click_rect)
+    # Draw "Click to Play" button
+    click_rect_play = pygame.Rect(200, 300, 200, 50)
+    click_color_play = (255, 20, 147)  # Dark Pink color for "Click to Play"
+    pygame.draw.rect(self.screen, click_color_play, click_rect_play)
 
     # Draw text for "Click to Play"
-    click_font = pygame.font.Font(None, 36)
-    click_text = click_font.render("Click to Play", True, (0, 0, 0))
-    click_text_rect = click_text.get_rect(center=click_rect.center)
-    self.screen.blit(click_text, click_text_rect)
+    click_font_play = pygame.font.Font(None, 36)
+    click_text_play = click_font_play.render("Click to Play", True, (255, 255, 255))
+    click_text_rect_play = click_text_play.get_rect(center=click_rect_play.center)
+    self.screen.blit(click_text_play, click_text_rect_play)
 
-    instructions_box_rect = pygame.Rect(100, 300, 200, 50)
-    pygame.draw.rect(self.screen, (255, 255, 255), instructions_box_rect)
+    # Draw "How to Play" button
+    click_rect_instructions = pygame.Rect(420, 300, 200, 50)
+    click_color_instructions = (255, 20, 147)  # Dark Pink color for "How to Play"
+    pygame.draw.rect(self.screen, click_color_instructions, click_rect_instructions)
 
-    # Render and draw the text
-    font = pygame.font.Font(None, 32)
-    instructions_surface = font.render("How to Play", True, (0, 0, 0))
-
-    # Define instructions_rect before using it
-    instructions_rect = instructions_surface.get_rect(topleft=(instructions_box_rect.left + 10, instructions_box_rect.top + 10))
-
-    self.screen.blit(instructions_surface, instructions_rect)
-
-    #self.handle_events()
+    # Draw text for "How to Play"
+    click_font_instructions = pygame.font.Font(None, 36)
+    click_text_instructions = click_font_instructions.render("How to Play", True, (255, 255, 255))
+    click_text_rect_instructions = click_text_instructions.get_rect(center=click_rect_instructions.center)
+    self.screen.blit(click_text_instructions, click_text_rect_instructions)
+    
     pygame.display.flip()
 
 
@@ -192,19 +197,17 @@ class Game:
     self.render_gems()
     pygame.display.flip()
 
-  
+
   def render_home_button(self):
     home_button_rect = pygame.Rect(300, 400, 200, 50)
-    home_button_color = (0, 255, 0)
+    home_button_color = (255, 20, 147)
     pygame.draw.rect(self.screen, home_button_color, home_button_rect)
 
     home_button_font = pygame.font.Font(None, 36)
     home_button_text = home_button_font.render("Home", True, (0, 0, 0))
     home_button_text_rect = home_button_text.get_rect(center=home_button_rect.center)
     self.screen.blit(home_button_text, home_button_text_rect)
-    #self.game_state = "intro"
 
-    
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.is_running = False
@@ -214,13 +217,6 @@ class Game:
           self.gems = []
           self.generate_gems_positions()
           self.game_state = "intro"
-         # self.render_intro_scene()
-
-
-    #event = pygame.event.poll()
-    #if event.type == pygame.MOUSEBUTTONDOWN and home_button_rect.collidepoint(event.pos):
-      #self.game_state = "intro"
-     # elf.render_intro_scene()
 
     pygame.display.flip()
 
@@ -244,12 +240,9 @@ class Game:
     self.render_home_button()
     pygame.display.flip()
 
-
+  
   def run(self):
     while self.is_running:
-     # print("Current game state:", self.game_state)
-      self.handle_events()
-      self.update()
       if self.game_state == "intro":
         self.render_intro_scene()
         self.player_health = 100
@@ -257,18 +250,13 @@ class Game:
         self.render_game_scene()
       elif self.game_state == "losing":
         self.render_losing_scene()
-       # self.render_home_button()
-        #pygame.display.flip()
-        #pygame.time.delay(2000)
-        #self.game_state = "intro"
       elif self.game_state == "winning":
         self.render_winning_scene()
-       # self.render_home_button()
-        #pygame.display.flip()
-       # pygame.time.delay(2000)
-        #self.game_state = "intro"
       elif self.game_state == "instructions":
         self.render_instructions()
       
+      self.handle_events()
+      self.update()
+
       pygame.display.flip()
       self.clock.tick(60)
