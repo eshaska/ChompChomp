@@ -1,9 +1,6 @@
 import pygame
 import random
 
-#make it so player can't leave screen
-#make other monsters with different powers and paths
-#have to reset gems after rounds
 #fix comments and put into github
 
 class Game:
@@ -16,13 +13,43 @@ class Game:
     self.game_state = "intro"
 
     self.player_rect = pygame.Rect(100, 100, 50, 50)
-    self.player_color = (255, 255, 255)
+    self.player_color = (255,182,193)
     self.player_health = 100
 
-    self.lvl_1_monster_rect = pygame.Rect(400,500,50,50)
-    self.lvl_1_monster_color = (255, 0, 0)
-    self.monster_speed = 3  # Adjust the speed as needed
-    self.monster_path = [(100, 400), (300, 400), (500, 400), (700, 400)]  # Example path
+    self.monster1_image = pygame.image.load("/Users/evashaska/Desktop/pinkmonster.png").convert_alpha()
+    self.monster1_image = pygame.transform.scale(self.monster1_image, (70, 70))
+    self.monster1_image.set_colorkey((255,255,255))
+    self.monster1_rect = pygame.Rect(400,500,50,50)
+    self.monster1_speed = 3
+    self.monster1_path =[(100, 400), (300, 400), (500, 400), (700, 400)]
+
+    self.monster2_image = pygame.image.load("/Users/evashaska/Desktop/purplemonster.png").convert_alpha()
+    self.monster2_image = pygame.transform.scale(self.monster2_image, (70, 70))
+    self.monster2_image.set_colorkey((255,255,255))
+    self.monster2_rect = pygame.Rect(400,500,50,50)
+    self.monster2_speed = 4
+    self.monster2_path = [(400, 100), (400, 200), (250, 390), (200, 700)]
+
+    self.monster3_image = pygame.image.load("/Users/evashaska/Desktop/bluemonster.png").convert_alpha()
+    self.monster3_image = pygame.transform.scale(self.monster3_image, (70, 70))
+    self.monster3_image.set_colorkey((255,255,255))
+    self.monster3_rect = pygame.Rect(400,500,50,50)
+    self.monster3_speed = 4
+    self.monster3_path = [(100, 100), (300, 100), (500, 100), (700, 100)]
+
+    self.monster4_image = pygame.image.load("/Users/evashaska/Desktop/greenmonster.png").convert_alpha()
+    self.monster4_image = pygame.transform.scale(self.monster4_image, (70, 70))
+    self.monster4_image.set_colorkey((255,255,255))
+    self.monster4_rect = pygame.Rect(400,500,50,50)
+    self.monster4_speed = 5
+    self.monster4_path = [(100, 300), (300, 300), (500, 300), (700, 300)]
+
+    self.monster5_image = pygame.image.load("/Users/evashaska/Desktop/redmonster.png").convert_alpha()
+    self.monster5_image = pygame.transform.scale(self.monster5_image, (70, 70))
+    self.monster5_image.set_colorkey((255,255,255))
+    self.monster5_rect = pygame.Rect(400,500,50,50)
+    self.monster5_speed = 5
+    self.monster5_path = [(100, 500), (100, 300), (500, 300), (700, 300)]
 
     self.gems = []
     self.generate_gems_positions()
@@ -37,7 +64,7 @@ class Game:
 
 
   def render_gems(self):
-    gem_color = (255, 255, 0)
+    gem_color = (255, 20, 147)
     for gem_position in self.gems:
       pygame.draw.circle(self.screen, gem_color, gem_position, 10)
 
@@ -64,34 +91,24 @@ class Game:
     pygame.draw.rect(self.screen, (0, 255, 0), (50, 20, health_bar_width, 20))  # Green foreground
 
 
-  def update(self):
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-      self.player_rect.x -= 5
-    if keys[pygame.K_RIGHT]:
-        self.player_rect.x += 5
-    if keys[pygame.K_UP]:
-        self.player_rect.y -= 5
-    if keys[pygame.K_DOWN]:
-        self.player_rect.y += 5
-
-    # Move the monster automatically along the predefined path
-    target_x, target_y = self.monster_path[self.current_path_index]
+  def monster_update(self, monster_speed, monster_path, monster_rect):
+     # Move the monster automatically along the predefined path
+    target_x, target_y = monster_path[self.current_path_index]
 
     # Move towards the target point
-    if self.lvl_1_monster_rect.x < target_x:
-      self.lvl_1_monster_rect.x += self.monster_speed
-    elif self.lvl_1_monster_rect.x > target_x:
-      self.lvl_1_monster_rect.x -= self.monster_speed
+    if monster_rect.x < target_x:
+      monster_rect.x += monster_speed
+    elif monster_rect.x > target_x:
+      monster_rect.x -= monster_speed
 
-    if self.lvl_1_monster_rect.y < target_y:
-      self.lvl_1_monster_rect.y += self.monster_speed
-    elif self.lvl_1_monster_rect.y > target_y:
-      self.lvl_1_monster_rect.y -= self.monster_speed
+    if monster_rect.y < target_y:
+      monster_rect.y += monster_speed
+    elif self.monster1_rect.y > target_y:
+      monster_rect.y -= monster_speed
 
 
     if not self.collided:
-      if self.check_collision(self.player_rect, self.lvl_1_monster_rect):
+      if self.check_collision(self.player_rect, monster_rect):
         self.player_health -= 10  # Adjust the decrement as needed
         self.collided = True  # Set the collision flag
         if self.player_health <= 0:
@@ -104,15 +121,34 @@ class Game:
     # Check if the monster reached its target point
     distance_threshold = 5
     if (
-        abs(self.lvl_1_monster_rect.x - target_x) <= distance_threshold
-        and abs(self.lvl_1_monster_rect.y - target_y) <= distance_threshold
+        abs(monster_rect.x - target_x) <= distance_threshold
+        and abs(monster_rect.y - target_y) <= distance_threshold
     ):
-      self.current_path_index = (self.current_path_index + 1) % len(self.monster_path)
+      self.current_path_index = (self.current_path_index + 1) % len(monster_path)
 
     if len(self.gems)>0:
       self.check_collision_gems()
     else:
       self.game_state = "winning"
+
+
+  def update(self):
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and self.player_rect.left > 0:
+        self.player_rect.x -= 5
+    if keys[pygame.K_RIGHT] and self.player_rect.right < self.width:
+        self.player_rect.x += 5
+    if keys[pygame.K_UP] and self.player_rect.top > 0:
+        self.player_rect.y -= 5
+    if keys[pygame.K_DOWN] and self.player_rect.bottom < self.height:
+        self.player_rect.y += 5
+
+    self.monster_update(self.monster1_speed, self.monster1_path, self.monster1_rect)
+    self.monster_update(self.monster2_speed, self.monster2_path, self.monster2_rect)
+    self.monster_update(self.monster3_speed, self.monster3_path, self.monster3_rect)
+    self.monster_update(self.monster4_speed, self.monster4_path, self.monster4_rect)
+    self.monster_update(self.monster5_speed, self.monster5_path, self.monster5_rect)
 
 
   def check_collision(self, rect1, rect2):
@@ -153,18 +189,19 @@ class Game:
     self.screen.fill((255,182,193))
     self.game_state = "intro" #shouldnt need
     # Draw a rectangle for the title
-    title_rect = pygame.Rect(50, 50, 700, 150)
+    title_rect = pygame.Rect(50, 70, 700, 150)
     title_color = (255, 255, 255)
     pygame.draw.rect(self.screen, title_color, title_rect)
 
     # Draw text for the title
-    title_font = pygame.font.Font(None, 64)
+    title_font = pygame.font.Font(pygame.font.match_font('impact'), 64)
     title_text = title_font.render("Chomp Chomp", True, (255, 20, 147))
     title_text_rect = title_text.get_rect(center=title_rect.center)
     self.screen.blit(title_text, title_text_rect)
 
+
     # Draw "Click to Play" button
-    click_rect_play = pygame.Rect(200, 300, 200, 50)
+    click_rect_play = pygame.Rect(300, 290, 200, 50)
     click_color_play = (255, 20, 147)  # Dark Pink color for "Click to Play"
     pygame.draw.rect(self.screen, click_color_play, click_rect_play)
 
@@ -175,13 +212,13 @@ class Game:
     self.screen.blit(click_text_play, click_text_rect_play)
 
     # Draw "How to Play" button
-    click_rect_instructions = pygame.Rect(420, 300, 200, 50)
+    click_rect_instructions = pygame.Rect(300, 360, 200, 50)
     click_color_instructions = (255, 20, 147)  # Dark Pink color for "How to Play"
     pygame.draw.rect(self.screen, click_color_instructions, click_rect_instructions)
 
     # Draw text for "How to Play"
     click_font_instructions = pygame.font.Font(None, 36)
-    click_text_instructions = click_font_instructions.render("How to Play", True, (255, 255, 255))
+    click_text_instructions = click_font_instructions.render("Instructions", True, (255, 255, 255))
     click_text_rect_instructions = click_text_instructions.get_rect(center=click_rect_instructions.center)
     self.screen.blit(click_text_instructions, click_text_rect_instructions)
     
@@ -189,10 +226,14 @@ class Game:
 
 
   def render_game_scene(self):
-    self.screen.fill((0,0,0))
+    self.screen.fill((255,255,255))
     self.game_state = "playing"
     pygame.draw.rect(self.screen, self.player_color, self.player_rect)
-    pygame.draw.rect(self.screen, self.lvl_1_monster_color, self.lvl_1_monster_rect)
+    self.screen.blit(self.monster1_image, self.monster1_rect.topleft)
+    self.screen.blit(self.monster2_image, self.monster2_rect.topleft)
+    self.screen.blit(self.monster3_image, self.monster3_rect.topleft)
+    self.screen.blit(self.monster4_image, self.monster4_rect.topleft)
+    self.screen.blit(self.monster5_image, self.monster5_rect.topleft)
     self.render_health_bar()
     self.render_gems()
     pygame.display.flip()
@@ -204,7 +245,7 @@ class Game:
     pygame.draw.rect(self.screen, home_button_color, home_button_rect)
 
     home_button_font = pygame.font.Font(None, 36)
-    home_button_text = home_button_font.render("Home", True, (0, 0, 0))
+    home_button_text = home_button_font.render("Home", True, (255, 255, 255))
     home_button_text_rect = home_button_text.get_rect(center=home_button_rect.center)
     self.screen.blit(home_button_text, home_button_text_rect)
 
@@ -222,7 +263,7 @@ class Game:
 
 
   def render_losing_scene(self):
-    self.screen.fill((0,0,0))
+    self.screen.fill((255,182,193))
     title_font = pygame.font.Font(None, 64)
     losing_text = title_font.render("You Lost!", True, (255,255,255))
     text_rect = losing_text.get_rect(center=(self.width // 2, self.height // 2))
@@ -232,7 +273,7 @@ class Game:
 
 
   def render_winning_scene(self):
-    self.screen.fill((0,0,0))
+    self.screen.fill((255,182,193))
     title_font = pygame.font.Font(None, 64)
     winning_text = title_font.render("You Won!", True, (255,255,255))
     text_rect = winning_text.get_rect(center=(self.width // 2, self.height // 2))
